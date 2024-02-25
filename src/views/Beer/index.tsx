@@ -19,46 +19,50 @@ const Beer = () => {
           <h1>{beer?.name}</h1>
         </header>
         <main className={styles.details}>
-          <div className={styles.info}>
-            <label className={styles.label}>Type:</label>
-            <span>{beer?.brewery_type}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>Address:</label>
-            <span>{beer?.address_1}, {beer?.address_2}, {beer?.address_3}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>City:</label>
-            <span>{beer?.city}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>State/Province:</label>
-            <span>{beer?.state_province}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>Postal Code:</label>
-            <span>{beer?.postal_code}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>Country:</label>
-            <span>{beer?.country}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>Phone:</label>
-            <span>{beer?.phone}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>Website:</label>
-            <a href={beer?.website_url} className={styles.link}>{beer?.website_url}</a>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>State:</label>
-            <span>{beer?.state}</span>
-          </div>
-          <div className={styles.info}>
-            <label className={styles.label}>Street:</label>
-            <span>{beer?.street}</span>
-          </div>
+          <table className={styles.table}>
+            <tbody>
+              <tr>
+                <th>Type:</th>
+                <td>{beer?.brewery_type}</td>
+              </tr>
+              <tr>
+                <th>Address:</th>
+                <td>{beer?.address_1}, {beer?.address_2}, {beer?.address_3}</td>
+              </tr>
+              <tr>
+                <th>City:</th>
+                <td>{beer?.city}</td>
+              </tr>
+              <tr>
+                <th>State/Province:</th>
+                <td>{beer?.state_province}</td>
+              </tr>
+              <tr>
+                <th>Postal Code:</th>
+                <td>{beer?.postal_code}</td>
+              </tr>
+              <tr>
+                <th>Country:</th>
+                <td>{beer?.country}</td>
+              </tr>
+              <tr>
+                <th>Phone:</th>
+                <td>{beer?.phone}</td>
+              </tr>
+              <tr>
+                <th>Website:</th>
+                <td><a href={beer?.website_url} className={styles.link}>{beer?.website_url}</a></td>
+              </tr>
+              <tr>
+                <th>State:</th>
+                <td>{beer?.state}</td>
+              </tr>
+              <tr>
+                <th>Street:</th>
+                <td>{beer?.street}</td>
+              </tr>
+            </tbody>
+          </table>
         </main>
       </section>
     </article>

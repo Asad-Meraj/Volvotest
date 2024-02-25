@@ -1,18 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTable, useSortBy, useGlobalFilter, usePagination} from 'react-table';
 import { Beer } from '../../types';
 import { fetchData } from './utils';
-import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
-import SportsBar from '@mui/icons-material/SportsBar';
-import { useNavigate } from 'react-router-dom';
+import { Table, TableHead, TableBody, TableRow, TableCell, Button, TextField } from '@mui/material';
+import styles from './BeerList.module.css';
+import { Link } from 'react-router-dom';
 
 const BeerList = () => {
-  const navigate = useNavigate();
   const [beerList, setBeerList] = useState<Array<Beer>>([]);
 
-  // eslint-disable-next-line
-  useEffect(fetchData.bind(this, setBeerList), []);
+  useEffect(() => {
+    fetchData(setBeerList);
+  }, []);
 
-  const onBeerClick = (id: string) => navigate(`/beer/${id}`);
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Name',
+        accessor: 'name',
+      },
+      {
+        Header: 'Brewery Type',
+        accessor: 'brewery_type',
+      },
+    ],
+    []
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    nextPage,
+    previousPage,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    state: { pageIndex, pageSize, globalFilter },
+    setGlobalFilter,
+  } = useTable(
+    {
+      columns,
+      data: beerList,
+      initialState: { pageIndex: 0 },
+    },
+    useGlobalFilter,
+    useSortBy,
+    usePagination
+  );
 
   return (
     <article>
@@ -21,18 +58,66 @@ const BeerList = () => {
           <h1>BeerList page</h1>
         </header>
         <main>
-          <List>
-            {beerList.map((beer) => (
-              <ListItemButton key={beer.id} onClick={onBeerClick.bind(this, beer.id)}>
-                <ListItemAvatar>
-                  <Avatar>
-                    <SportsBar />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={beer.name} secondary={beer.brewery_type} />
-              </ListItemButton>
-            ))}
-          </List>
+          <div className={styles.filterContainer}>
+            <TextField
+              label='Search...'
+              variant='outlined'
+              className={styles.searchInput}
+              value={globalFilter || ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+            />
+            <Button variant='contained' onClick={() => fetchData(setBeerList)}>
+              Reload list
+            </Button>
+          </div>
+
+          <Table className={styles.table} {...getTableProps()}>
+            <TableHead>
+              {headerGroups.map((headerGroup: any) => (
+                <TableRow {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column: any) => (
+                    <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render('Header')}
+                      <span>
+                        {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                      </span>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody {...getTableBodyProps()}>
+              {page.map((row: any) => {
+                prepareRow(row);
+                return (
+                  <TableRow {...row.getRowProps()}>
+                    {row.cells.map((cell: any) => (
+                      <TableCell {...cell.getCellProps()}>
+                        {/* Rendering Link component for the beer name */}
+                        <Link to={`/beer/${row.original.id}`}>
+                          {cell.render('Cell')}
+                        </Link>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+          <div>
+            <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+              Previous
+            </Button>{' '}
+            <Button onClick={() => nextPage()} disabled={!canNextPage}>
+              Next
+            </Button>{' '}
+            <span>
+              Page{' '}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>{' '}
+            </span>
+          </div>
         </main>
       </section>
     </article>
